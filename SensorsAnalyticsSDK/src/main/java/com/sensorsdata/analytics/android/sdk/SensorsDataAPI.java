@@ -158,6 +158,10 @@ public class SensorsDataAPI implements ISensorsDataAPI {
     SensorsDataEncrypt mSensorsDataEncrypt;
     private SensorsDataDeepLinkCallback mDeepLinkCallback;
     SensorsDataRemoteManager mRemoteManager;
+    //是否已经采集了带有插件版本号的事件
+    private boolean isTrackEventWithPluginVersion = false;
+    //插件版本号，插件会用到此属性，请谨慎修改
+    private static String ANDROID_PLUGIN_VERSION = "3.2.11";
 
     //private
     SensorsDataAPI() {
@@ -2605,6 +2609,16 @@ public class SensorsDataAPI implements ISensorsDataAPI {
                     return;
                 }
             }
+            try {
+                if (!trackEventWithPluginVersion && !propertiesObject.has("$lib_plugin_version")) {
+                    JSONArray libPluginVersion = new JSONArray();
+                    libPluginVersion.put("android_plugin:" + ANDROID_PLUGIN_VERSION);
+                    propertiesObject.put("$lib_plugin_version", libPluginVersion);
+                    trackEventWithPluginVersion = true;
+                }
+            } catch (Exception e) {
+                SALog.printStackTrace(e);
+            }
             eventObject.put("properties", propertiesObject);
 
             if (eventType == EventType.TRACK_SIGNUP) {
@@ -2984,6 +2998,16 @@ public class SensorsDataAPI implements ISensorsDataAPI {
                         SALog.d(TAG, eventName + " event can not enter database");
                         return;
                     }
+                }
+                try {
+                    if (!trackEventWithPluginVersion && !sendProperties.has("$lib_plugin_version")) {
+                        JSONArray libPluginVersion = new JSONArray();
+                        libPluginVersion.put("android_plugin:" + ANDROID_PLUGIN_VERSION);
+                        sendProperties.put("$lib_plugin_version", libPluginVersion);
+                        trackEventWithPluginVersion = true;
+                    }
+                } catch (Exception e) {
+                    SALog.printStackTrace(e);
                 }
                 dataObj.put("properties", sendProperties);
 
