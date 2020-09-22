@@ -158,6 +158,8 @@ public class SensorsDataAPI implements ISensorsDataAPI {
     SensorsDataEncrypt mSensorsDataEncrypt;
     private SensorsDataDeepLinkCallback mDeepLinkCallback;
     SensorsDataRemoteManager mRemoteManager;
+    private boolean trackEventWithPluginVersion;
+    private static String ANDROID_PLUGIN_VERSION = "4.2.2";
 
     //private
     SensorsDataAPI() {
@@ -2605,6 +2607,16 @@ public class SensorsDataAPI implements ISensorsDataAPI {
                     return;
                 }
             }
+            try {
+                if (!trackEventWithPluginVersion && !propertiesObject.has("$lib_plugin_version")) {
+                    JSONArray libPluginVersion = new JSONArray();
+                    libPluginVersion.put("android_plugin:" + ANDROID_PLUGIN_VERSION);
+                    propertiesObject.put("$lib_plugin_version", libPluginVersion);
+                    trackEventWithPluginVersion = true;
+                }
+            } catch (Exception e) {
+                SALog.printStackTrace(e);
+            }
             eventObject.put("properties", propertiesObject);
 
             if (eventType == EventType.TRACK_SIGNUP) {
@@ -2984,6 +2996,16 @@ public class SensorsDataAPI implements ISensorsDataAPI {
                         SALog.d(TAG, eventName + " event can not enter database");
                         return;
                     }
+                }
+                try {
+                    if (!trackEventWithPluginVersion && !sendProperties.has("$lib_plugin_version")) {
+                        JSONArray libPluginVersion = new JSONArray();
+                        libPluginVersion.put("android_plugin:" + ANDROID_PLUGIN_VERSION);
+                        sendProperties.put("$lib_plugin_version", libPluginVersion);
+                        trackEventWithPluginVersion = true;
+                    }
+                } catch (Exception e) {
+                    SALog.printStackTrace(e);
                 }
                 dataObj.put("properties", sendProperties);
 
