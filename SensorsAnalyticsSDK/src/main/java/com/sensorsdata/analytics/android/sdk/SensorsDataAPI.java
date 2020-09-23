@@ -159,7 +159,7 @@ public class SensorsDataAPI implements ISensorsDataAPI {
     private SensorsDataDeepLinkCallback mDeepLinkCallback;
     SensorsDataRemoteManager mRemoteManager;
     //是否已经采集了带有插件版本号的事件
-    private boolean isTrackEventWithPluginVersion = false;
+    private boolean trackEventWithPluginVersion = false;
     //插件版本号，插件会用到此属性，请谨慎修改
     private static String ANDROID_PLUGIN_VERSION = "3.2.11";
 
